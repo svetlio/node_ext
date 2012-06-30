@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * @file
+ * Add custom functionality to nodes.
+ * 1. Node weight - may be use in listing to order nodes
+ */
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_ext_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form['#node_edit_form']) && $form['#node_edit_form'] && isset($form['field_weight'])) {
+    //get the bigest number of field_weight
+    $weight = db_select('field_data_field_weight', 'w')
+      -> fields('w', array('field_weight_value'))
+      -> condition('bundle', $form['type']['#value'], '=')
+      -> orderBy('field_weight_value', 'DESC')
+      -> range(0, 1)
+      -> execute() -> fetchField();
+    
+    if ($weight == FALSE) {
+      $weight = '0';
+    }
+    
+    if (empty($form['field_weight']['und'][0]['value']['#default_value'])) {
+      $form['field_weight']['und'][0]['value']['#default_value'] = $weight + 1;
+    }
+    //add suffix to this form field
+    $form['field_weight']['#suffix'] = t('Latest Weight for this content type is:') . $weight;
+  }
+}
+
+/**
+ * Implementation of hook_node_view().
+ */
+function node_ext_node_view($node, $view_mode, $langcode) {
+  //hide the field_weight
+  if (isset($node -> field_weight)) {
+    hide($node -> content['field_weight']);
+  }
+}
+
+/**
+ * Implementation of hook_enable().
+ */
+function node_ext_enable() {
+  // Check if our field is not already created.
+  if (!field_info_field('field_weight')) {
+    $field = array(
+      'field_name' => 'field_weight', 
+      'type' => 'number_integer', 
+    );
+    field_create_field($field);
+
+    $bundles = array('page', 'article');
+    // Create the instance on bundles.
+    foreach($bundles AS $bundle) {
+      $instance = array(
+        'field_name' => 'field_weight', 
+        'entity_type' => 'node',
+        'label' => 'Weight', 
+        'bundle' => $bundle, 
+        // If you don't set the "required" property then the field wont be required by default.
+        'required' => TRUE,
+        'widget' => array(
+          'type' => 'textfield',
+        ), 
+      );
+      field_create_instance($instance);
+    }
+  }
+}
+
+/**
+ * Implementation of hook_disable().
+ */
+function node_ext_disable() {
+  if (field_info_field('field_weight')) {
+    field_delete_field('field_weight');
+  }
+}
