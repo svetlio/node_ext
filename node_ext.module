@@ -17,7 +17,7 @@ function node_ext_form_alter(&$form, &$form_state, $form_id) {
       -> condition('bundle', $form['type']['#value'], '=')
       -> orderBy('field_weight_value', 'DESC')
       -> range(0, 1)
-      -> execute() -> fetchField();
+      -> execute() -> fetchField(); 
     
     if ($weight == FALSE) {
       $weight = '0';

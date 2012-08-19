@@ -15,4 +15,4 @@ this:
   2.2. rename copy to node--article--full.tpl.php for content type article
   viewed on full mode. Change template content as you want.
 
-3. Change submitted date with updatted if node is updated.
+3. Change submitted date with updatted if node is updated. 
