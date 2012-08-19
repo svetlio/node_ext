@@ -1,0 +1,6 @@
+name = Node extensions
+description = Add awesome nodes things. Node weight.
+dependencies[] = node
+package = Other
+core = 7.x
+files[] = node_ext.module
