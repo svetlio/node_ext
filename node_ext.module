@@ -47,15 +47,6 @@ function node_ext_node_view($node, $view_mode, $langcode) {
 function node_ext_preprocess_node(&$variables) {
   //add node template suggestion node--NODE-TYPE--VIEW-Mode.tpl.php
   $variables['theme_hook_suggestions'][] = 'node__' . $variables['type'] . '__' . $variables['view_mode'];
-  
-  //change submitted date with updatted if node is updated
-  if ($variables['display_submitted'] == TRUE) {
-    if ($variables['changed'] > $variables['created']) {
-      $account = user_load($variables['uid']);
-      $date = format_date($variables['created'], $type = 'product_display_date', $format = '', $timezone = NULL, $langcode = NULL);
-      $variables['submitted'] = t('@date !author_link', array('@date' => $date, '!author_link' => l(format_username($account), 'user/' . $variables['uid'])));
-    }
-  }
 }
 
 /**
