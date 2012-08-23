@@ -93,3 +93,42 @@ function node_ext_disable() {
     field_delete_field('field_weight');
   }
 }
+
+/**
+ * Implements hook_block_info().
+ */
+function node_ext_block_info() {
+  $blocks['go_back'] = array(
+    'info' => t('Go Back'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function node_ext_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'go_back':
+      
+      drupal_add_js('function goBack() {
+        window.history.back()
+      }', 'inline');
+      
+      $block['subject'] = '<none>';
+      $block['content'] = _go_back_content();
+      break;
+  }
+  return $block;
+}
+
+function _go_back_content() {
+  $output = '';
+  
+  $output = '<input type="button" value="Back" onclick="goBack()" />';
+  
+  return $output;
+}
