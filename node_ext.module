@@ -113,22 +113,35 @@ function node_ext_block_view($delta = '') {
 
   switch ($delta) {
     case 'go_back':
-      
-      drupal_add_js('function goBack() {
-        window.history.back()
-      }', 'inline');
-      
       $block['subject'] = '<none>';
-      $block['content'] = _go_back_content();
+      $block['content'] = render(drupal_get_form('my_go_back_form'));
       break;
   }
   return $block;
 }
 
-function _go_back_content() {
-  $output = '';
+/**
+ * Custom form implementation
+ */
+function my_go_back_form($form, $form_state) {
+  $form = array();
   
-  $output = '<input type="button" value="Back" onclick="goBack()" />';
+  //add inline javascript to this form
+  $form['#attached']['js'] = array('function goBack() {
+    window.history.back()}' => array(
+      'type' => 'inline'
+    )
+  );
   
-  return $output;
+  //button definition
+  $form['go_back'] = array(
+    '#type' => 'button',
+    '#value' => t('Back'),
+    '#attributes' => array(
+       'onclick' => 'goBack()',
+       'class' => array('go-back-btn'),
+    ),
+  );
+  
+  return $form;
 }
