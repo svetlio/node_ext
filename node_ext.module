@@ -127,10 +127,11 @@ function my_go_back_form($form, $form_state) {
   $form = array();
   
   //add inline javascript to this form
-  $form['#attached']['js'] = array('function goBack() {
-    window.history.back()}' => array(
-      'type' => 'inline'
-    )
+  $form['#attached']['js'] = array(
+    //insert clean js inline, uderstandable for many browsers
+    'function goBack() {window.history.back()}' => array('type' => 'inline'),
+    //insert external js from file - prevent default btn event
+    drupal_get_path('module', 'node_ext') . '/node_ext.js' => array('type' => 'file'),
   );
   
   //button definition
@@ -138,7 +139,7 @@ function my_go_back_form($form, $form_state) {
     '#type' => 'button',
     '#value' => t('Back'),
     '#attributes' => array(
-       'onclick' => 'goBack()',
+       'onclick' => array('goBack()'),
        'class' => array('go-back-btn'),
     ),
   );
