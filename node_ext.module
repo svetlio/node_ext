@@ -42,6 +42,19 @@ function node_ext_node_view($node, $view_mode, $langcode) {
 }
 
 /**
+ * Implementation of hook_node_view_alter().
+ */
+function node_ext_node_view_alter(&$build) {  
+  if ($build['#view_mode'] == 'teaser' && isset($build['field_image'][1])) {
+    foreach ($build['field_image'] AS $k => $item) {
+      if (is_numeric($k) && $k > 0) {
+        unset($build['field_image'][$k]);
+      }
+    }
+  }
+}
+
+/**
  * Implementation of hook_node_view().
  */
 function node_ext_preprocess_node(&$variables) {
@@ -131,7 +144,7 @@ function my_go_back_form($form, $form_state) {
     //insert clean js inline, uderstandable for many browsers
     'function goBack() {window.history.back()}' => array('type' => 'inline'),
     //insert external js from file - prevent default btn event
-    drupal_get_path('module', 'node_ext') . '/node_ext.js' => array('type' => 'file'),
+    drupal_get_path('module', 'node_ext') . '/misc/node_ext.js' => array('type' => 'file'),
   );
   
   //button definition
@@ -145,4 +158,18 @@ function my_go_back_form($form, $form_state) {
   );
   
   return $form;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Implements hook_theme()
+ */
+function node_ext_theme() {
+  return array(
+    'popup' => array(
+      'template' => 'page__popup', //popup.tpl.php inside module directory.
+      'arguments' => array('content' => null), //Array of variables in popup.tpl.php
+    ),
+  );
 }
